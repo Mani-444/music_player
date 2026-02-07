@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:music_player_app/blocs/favorites/favorites_bloc.dart';
 import 'package:music_player_app/blocs/favorites/favorites_event.dart';
+import 'package:music_player_app/blocs/favorites/favorites_state.dart';
 import 'package:music_player_app/blocs/player/audio_player_bloc.dart';
 import 'package:music_player_app/blocs/player/audio_player_event.dart';
 import 'package:music_player_app/blocs/player/audio_player_state.dart';
@@ -89,25 +90,30 @@ class PlayerScreen extends StatelessWidget {
                           ),
                           Expanded(
                             flex: 1,
-                            child: InkWell(
-                              onTap: () {
-                                final isFav=state.currentSong?.isWishListed;
-                                if (isFav??false) {
-                                  context.read<FavoritesBloc>().add(RemoveFavoriteEvent(currentSong??SongInfoModel(path: '', name: '')));
-                                } else {
-                                  context.read<FavoritesBloc>().add(AddFavoriteEvent(currentSong??SongInfoModel(path: '', name: '')));
-                                }
-                              },
-                              child:
-                                  state.currentSong?.isWishListed ?? false
-                                      ? Icon(
-                                        Icons.favorite,
-                                        color: Colors.white,
-                                      )
-                                      : Icon(
-                                        Icons.favorite_border,
-                                        color: Colors.white,
-                                      ),
+                            child: BlocBuilder<FavoritesBloc, FavoritesState>(
+                              builder: (context,favState) {
+                                final isFav = favState.favorites
+                                    .any((s) => s.path == currentSong?.path);
+                                return InkWell(
+                                  onTap: () {
+                                    if (isFav) {
+                                      context.read<FavoritesBloc>().add(RemoveFavoriteEvent(currentSong??SongInfoModel(path: '', name: '')));
+                                    } else {
+                                      context.read<FavoritesBloc>().add(AddFavoriteEvent(currentSong??SongInfoModel(path: '', name: '')));
+                                    }
+                                  },
+                                  child:
+                                      isFav
+                                          ? Icon(
+                                            Icons.favorite,
+                                            color: Colors.white,
+                                          )
+                                          : Icon(
+                                            Icons.favorite_border,
+                                            color: Colors.white,
+                                          ),
+                                );
+                              }
                             ),
                           ),
                         ],
