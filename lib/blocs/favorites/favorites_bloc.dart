@@ -13,24 +13,28 @@ class FavoritesBloc extends Bloc<FavoritesEvent, FavoritesState> {
   }
 
   Future<void> _onLoad(
-      LoadFavoritesEvent event, Emitter<FavoritesState> emit) async {
+    LoadFavoritesEvent event,
+    Emitter<FavoritesState> emit,
+  ) async {
     emit(state.copyWith(isLoading: true));
 
     final prefs = await SharedPreferences.getInstance();
     final data = prefs.getStringList("favorite_songs") ?? [];
 
     final favList =
-    data.map((e) => SongInfoModel.fromJson(json.decode(e))).toList();
+        data.map((e) => SongInfoModel.fromJson(json.decode(e))).toList();
 
     emit(state.copyWith(favorites: favList, isLoading: false));
   }
 
   Future<void> _onAdd(
-      AddFavoriteEvent event, Emitter<FavoritesState> emit) async {
+    AddFavoriteEvent event,
+    Emitter<FavoritesState> emit,
+  ) async {
     final prefs = await SharedPreferences.getInstance();
 
     final updated = List<SongInfoModel>.from(state.favorites)..add(event.song);
-    event.song.isWishListed=true;
+    event.song.isWishListed = true;
     // save to storage
     await prefs.setStringList(
       "favorite_songs",
@@ -41,12 +45,14 @@ class FavoritesBloc extends Bloc<FavoritesEvent, FavoritesState> {
   }
 
   Future<void> _onRemove(
-      RemoveFavoriteEvent event, Emitter<FavoritesState> emit) async {
+    RemoveFavoriteEvent event,
+    Emitter<FavoritesState> emit,
+  ) async {
     final prefs = await SharedPreferences.getInstance();
 
     final updated = List<SongInfoModel>.from(state.favorites)
-      ..removeWhere((s) => s.path == event.song.path);
-    event.song.isWishListed=false;
+      ..removeWhere((s) => s.name == event.song.name);
+    event.song.isWishListed = false;
 
     await prefs.setStringList(
       "favorite_songs",

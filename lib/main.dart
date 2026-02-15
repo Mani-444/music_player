@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:music_player_app/blocs/favorites/favorites_bloc.dart';
+import 'package:music_player_app/blocs/favorites/favorites_event.dart';
 import 'package:music_player_app/blocs/playlists/playlist_bloc.dart';
 import 'package:music_player_app/blocs/playlists/playlist_event.dart';
 import 'package:music_player_app/blocs/song/song_bloc.dart';
@@ -23,6 +25,9 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider<PlaylistBloc>(
           create: (_) => PlaylistBloc()..add(LoadPlaylistsEvent()),
+        ),
+        BlocProvider<FavoritesBloc>(
+          create: (_) => FavoritesBloc()..add(LoadFavoritesEvent()),
         ),
       ],
       child: MaterialApp(

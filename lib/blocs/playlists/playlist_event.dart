@@ -24,3 +24,8 @@ class RemoveSongFromPlaylistEvent extends PlaylistEvent {
 
   RemoveSongFromPlaylistEvent({required this.playlistName, required this.song});
 }
+
+class RemoveSongFromAllPlaylistsEvent extends PlaylistEvent {
+  final SongInfoModel song;
+  RemoveSongFromAllPlaylistsEvent(this.song);
+}

@@ -20,4 +20,8 @@ class PlaylistModel {
               .toList(),
     );
   }
+
+  PlaylistModel copyWith({String? name, List<SongInfoModel>? songs}) {
+    return PlaylistModel(name: name ?? this.name, songs: songs ?? this.songs);
+  }
 }

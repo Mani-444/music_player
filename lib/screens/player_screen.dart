@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:music_player_app/blocs/favorites/favorites_bloc.dart';
@@ -7,6 +6,7 @@ import 'package:music_player_app/blocs/favorites/favorites_state.dart';
 import 'package:music_player_app/blocs/player/audio_player_bloc.dart';
 import 'package:music_player_app/blocs/player/audio_player_event.dart';
 import 'package:music_player_app/blocs/player/audio_player_state.dart';
+import 'package:music_player_app/common_widgets/custom_text.dart';
 import 'package:music_player_app/models/song_info_model.dart';
 
 class PlayerScreen extends StatelessWidget {
@@ -22,10 +22,12 @@ class PlayerScreen extends StatelessWidget {
       child: Scaffold(
         body: MultiBlocProvider(
           providers: [
-            BlocProvider(create: (context) =>
-            AudioPlayerBloc(songs)
-              ..add(PlaySongEvent(song: song, index: index))),
-            BlocProvider(create: (context) => FavoritesBloc()..add(LoadFavoritesEvent()))
+            BlocProvider(
+              create:
+                  (context) =>
+                      AudioPlayerBloc(songs)
+                        ..add(PlaySongEvent(song: song, index: index)),
+            ),
           ],
           child: BlocConsumer<AudioPlayerBloc, AudioPlayerState>(
             builder: (context, state) {
@@ -83,23 +85,31 @@ class PlayerScreen extends StatelessWidget {
                           SizedBox(width: 30),
                           Expanded(
                             flex: 6,
-                            child: Text(
-                              currentSong?.name ?? '-',
-                              style: TextStyle(color: Colors.white),
-                            ),
+                            child: CustomText(currentSong?.name ?? '-'),
                           ),
                           Expanded(
                             flex: 1,
                             child: BlocBuilder<FavoritesBloc, FavoritesState>(
-                              builder: (context,favState) {
-                                final isFav = favState.favorites
-                                    .any((s) => s.path == currentSong?.path);
+                              builder: (context, favState) {
+                                final isFav = favState.favorites.any(
+                                  (s) => s.path == currentSong?.path,
+                                );
                                 return InkWell(
                                   onTap: () {
                                     if (isFav) {
-                                      context.read<FavoritesBloc>().add(RemoveFavoriteEvent(currentSong??SongInfoModel(path: '', name: '')));
+                                      context.read<FavoritesBloc>().add(
+                                        RemoveFavoriteEvent(
+                                          currentSong ??
+                                              SongInfoModel(path: '', name: ''),
+                                        ),
+                                      );
                                     } else {
-                                      context.read<FavoritesBloc>().add(AddFavoriteEvent(currentSong??SongInfoModel(path: '', name: '')));
+                                      context.read<FavoritesBloc>().add(
+                                        AddFavoriteEvent(
+                                          currentSong ??
+                                              SongInfoModel(path: '', name: ''),
+                                        ),
+                                      );
                                     }
                                   },
                                   child:
@@ -113,7 +123,7 @@ class PlayerScreen extends StatelessWidget {
                                             color: Colors.white,
                                           ),
                                 );
-                              }
+                              },
                             ),
                           ),
                         ],
@@ -132,29 +142,9 @@ class PlayerScreen extends StatelessWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              _formatDuration(state.position),
-                              /* ref
-                            .read(homeProvider.notifier)
-                            .formatTime(
-                              home[ref.read(homeProvider.notifier).selectedIndex]
-                                      .position ??
-                                  0,
-                            )*/
-                              style: TextStyle(color: Colors.white),
-                            ),
+                            CustomText(_formatDuration(state.position)),
 
-                            Text(
-                              _formatDuration(state.duration),
-                              /* ref
-                            .read(homeProvider.notifier)
-                            .formatTime(
-                              home[ref.read(homeProvider.notifier).selectedIndex]
-                                      .duration ??
-                                  0,
-                            )*/
-                              style: TextStyle(color: Colors.white),
-                            ),
+                            CustomText(_formatDuration(state.duration)),
                           ],
                         ),
                       ),

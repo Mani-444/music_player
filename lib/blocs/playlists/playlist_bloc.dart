@@ -13,6 +13,7 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
     on<CreatePlaylistEvent>(_onCreate);
     on<AddSongToPlaylistEvent>(_onAddSong);
     on<RemoveSongFromPlaylistEvent>(_onRemoveSong);
+    on<RemoveSongFromAllPlaylistsEvent>(_onRemoveSongFromAllPlaylists);
   }
 
   Future<void> _onLoad(
@@ -101,5 +102,22 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
 
     await _save(updated);
     emit(state.copyWith(playlists: updated));
+  }
+
+  _onRemoveSongFromAllPlaylists(
+    RemoveSongFromAllPlaylistsEvent event,
+    Emitter<PlaylistState> emit,
+  ) async {
+    final updatedPlaylists =
+        state.playlists.map((playlist) {
+          final updatedSongs =
+              playlist.songs.where((s) => s.name != event.song.name).toList();
+
+          return playlist.copyWith(songs: updatedSongs);
+        }).toList();
+
+    await _save(updatedPlaylists);
+
+    emit(state.copyWith(playlists: updatedPlaylists));
   }
 }

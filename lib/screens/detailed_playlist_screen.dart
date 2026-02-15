@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:music_player_app/common_widgets/custom_text.dart';
+import 'package:music_player_app/models/playlist_model.dart';
+import 'package:music_player_app/screens/player_screen.dart';
 
 class DetailedPlaylistScreen extends StatelessWidget {
-  const DetailedPlaylistScreen({super.key});
+  const DetailedPlaylistScreen({super.key, required this.playlist});
+
+  final PlaylistModel playlist;
 
   @override
   Widget build(BuildContext context) {
-    // final home = ref.watch(homeProvider);
-    List list =[];
-        // home
-        //     .where((element) => element.playlistName == 'myPlaylist')
-        //     .toList();
+    final songs = playlist.songs;
     return SafeArea(
       child: Scaffold(
         body: Center(
@@ -36,125 +37,29 @@ class DetailedPlaylistScreen extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 20),
-                (list.isNotEmpty)
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                  height: 300,
+                  decoration: BoxDecoration(
+                    color: Colors.black26,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Center(
+                    child: Icon(
+                      Icons.audiotrack_outlined,
+                      color: Colors.white,
+                      size: 60,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 20),
+                (songs.isNotEmpty)
                     ? Expanded(
                       child: ListView.builder(
                         itemBuilder: (context, index) {
                           return Padding(
                             padding: EdgeInsets.only(bottom: 10),
                             child: ListTile(
-                              trailing: InkWell(
-                                onTap: () {
-                                  showBottomSheet(
-                                    context: context,
-                                    builder: (context) {
-                                      return Container(
-                                        width:
-                                            MediaQuery.of(context).size.width / 3,
-                                        height: 200,
-                                        decoration: BoxDecoration(
-                                          color: Colors.black54,
-                                          border: Border(
-                                            top: BorderSide(
-                                              color: Colors.black45,
-                                            ),
-                                            left: BorderSide(
-                                              color: Colors.black45,
-                                            ),
-                                            right: BorderSide(
-                                              color: Colors.black45,
-                                            ),
-                                          ),
-                                          borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(20),
-                                            topRight: Radius.circular(20),
-                                          ),
-                                        ),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.end,
-                                          children: [
-                                            TextButton(
-                                              onPressed: () {
-                                                Navigator.pop(context);
-                                              },
-                                              child: Text(
-                                                'Cancel',
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                            ),
-                                            Row(
-                                              children: [
-                                                SizedBox(width: 20),
-                                                Icon(
-                                                  Icons.playlist_add,
-                                                  color: Colors.white,
-                                                ),
-                                                SizedBox(width: 20),
-                                                Text(
-                                                  'Add to queue',
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            SizedBox(height: 10),
-                                            Row(
-                                              children: [
-                                                SizedBox(width: 20),
-                                                Icon(
-                                                  Icons.playlist_add,
-                                                  color: Colors.white,
-                                                ),
-                                                SizedBox(width: 20),
-                                                Text(
-                                                  'Add to playlist',
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            SizedBox(height: 10),
-                                            Row(
-                                              children: [
-                                                SizedBox(width: 20),
-                                                Icon(
-                                                  Icons.delete,
-                                                  color: Colors.white,
-                                                ),
-                                                SizedBox(width: 20),
-                                                Text(
-                                                  'Delete',
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            SizedBox(height: 10),
-                                            Icon(
-                                              Icons.share,
-                                              color: Colors.white,
-                                            ),
-                                            SizedBox(width: 20),
-                                            Text(
-                                              'Share',
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    },
-                                  );
-                                },
-                                child: Icon(Icons.more_vert, color: Colors.white),
-                              ),
                               leading: Container(
                                 width: 50,
                                 height: 50,
@@ -167,20 +72,26 @@ class DetailedPlaylistScreen extends StatelessWidget {
                                   color: Colors.white,
                                 ),
                               ),
-                              title: Text('',
-                                // home[index].name,
-                                style: TextStyle(color: Colors.white),
-                              ),
+                              title: CustomText(songs[index].name),
                               onTap: () {
-                                // ref.read(homeProvider.notifier).playSound(index);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder:
+                                        (context) => PlayerScreen(
+                                          index: index,
+                                          songs: songs,
+                                        ),
+                                  ),
+                                );
                               },
                             ),
                           );
                         },
-                        itemCount: list.length,
+                        itemCount: songs.length,
                       ),
                     )
-                    : Expanded(child: Center(child: Text('No Playlists'))),
+                    : Expanded(child: Center(child: Text('No Songs'))),
               ],
             ),
           ),

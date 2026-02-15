@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:music_player_app/blocs/favorites/favorites_bloc.dart';
 import 'package:music_player_app/blocs/favorites/favorites_event.dart';
-import 'package:music_player_app/blocs/player/audio_player_bloc.dart';
-import 'package:music_player_app/blocs/player/audio_player_event.dart';
 import 'package:music_player_app/blocs/playlists/playlist_bloc.dart';
 import 'package:music_player_app/blocs/playlists/playlist_event.dart';
 import 'package:music_player_app/blocs/playlists/playlist_state.dart';
@@ -11,6 +9,7 @@ import 'package:music_player_app/blocs/song/song_bloc.dart';
 import 'package:music_player_app/blocs/song/song_event.dart';
 import 'package:music_player_app/blocs/song/song_state.dart';
 import 'package:music_player_app/common_widgets/custom_music_action_widget.dart';
+import 'package:music_player_app/common_widgets/custom_text.dart';
 import 'package:music_player_app/models/song_info_model.dart';
 import 'package:music_player_app/screens/favorite_screen.dart';
 import 'package:music_player_app/screens/player_screen.dart';
@@ -41,14 +40,10 @@ class HomeScreen extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Text(
-                          'Meloplay',
-                          style: TextStyle(fontSize: 20, color: Colors.white),
-                        ),
+                        CustomText('Meloplay', fontSize: 20),
                         SizedBox(width: 20),
                         InkWell(
                           onTap: () {
-                            // ref.read(homeProvider.notifier).fetchList();
                             context.read<SongBloc>().add(AddSongsEvent());
                           },
                           child: Icon(Icons.add, color: Colors.white),
@@ -146,30 +141,20 @@ class HomeScreen extends StatelessWidget {
                                                   bottomSheetContext,
                                                 );
                                               },
-                                              child: Text(
-                                                'Cancel',
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                ),
-                                              ),
+                                              child: CustomText('Cancel'),
                                             ),
-                                            InkWell(
-                                              onTap: () {
-                                                ///Todo
-                                              },
-                                              child: Row(
-                                                children: [
-                                                  SizedBox(width: 20),
-                                                  Text(
-                                                    'Add to queue',
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            SizedBox(height: 10),
+                                            // InkWell(
+                                            //   onTap: () {
+                                            //     ///Todo
+                                            //   },
+                                            //   child: Row(
+                                            //     children: [
+                                            //       SizedBox(width: 20),
+                                            //       CustomText('Add to queue'),
+                                            //     ],
+                                            //   ),
+                                            // ),
+                                            // SizedBox(height: 10),
                                             InkWell(
                                               onTap: () {
                                                 Navigator.pop(
@@ -179,22 +164,11 @@ class HomeScreen extends StatelessWidget {
                                                   context,
                                                   state.songs[index],
                                                 );
-                                                // context.read<PlaylistBloc>().add(
-                                                //   AddSongToPlaylistEvent(
-                                                //     playlistName: 'My Playlist',
-                                                //     song: state.songs[index],
-                                                //   ),
-                                                // );
                                               },
                                               child: Row(
                                                 children: [
                                                   SizedBox(width: 20),
-                                                  Text(
-                                                    'Add to playlist',
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
+                                                  CustomText('Add to playlist'),
                                                 ],
                                               ),
                                             ),
@@ -206,6 +180,18 @@ class HomeScreen extends StatelessWidget {
                                                     state.songs[index],
                                                   ),
                                                 );
+                                                context.read<PlaylistBloc>().add(
+                                                  RemoveSongFromAllPlaylistsEvent(
+                                                    state.songs[index],
+                                                  ),
+                                                );
+                                                context
+                                                    .read<FavoritesBloc>()
+                                                    .add(
+                                                      RemoveFavoriteEvent(
+                                                        state.songs[index],
+                                                      ),
+                                                    );
                                                 Navigator.pop(
                                                   bottomSheetContext,
                                                 );
@@ -218,12 +204,7 @@ class HomeScreen extends StatelessWidget {
                                                     color: Colors.white,
                                                   ),
                                                   SizedBox(width: 20),
-                                                  Text(
-                                                    'Delete',
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
+                                                  CustomText('Delete'),
                                                 ],
                                               ),
                                             ),
@@ -236,12 +217,7 @@ class HomeScreen extends StatelessWidget {
                                                   color: Colors.white,
                                                 ),
                                                 SizedBox(width: 20),
-                                                Text(
-                                                  'Share',
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
+                                                CustomText('Share'),
                                               ],
                                             ),
                                           ],
@@ -267,10 +243,7 @@ class HomeScreen extends StatelessWidget {
                                   color: Colors.white,
                                 ),
                               ),
-                              title: Text(
-                                state.songs[index].name,
-                                style: TextStyle(color: Colors.white),
-                              ),
+                              title: CustomText(state.songs[index].name),
                               onTap: () {
                                 Navigator.push(
                                   context,
@@ -300,10 +273,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  void showAddToPlaylistSheet(
-      BuildContext parentContext,
-      SongInfoModel song,
-      ) {
+  void showAddToPlaylistSheet(BuildContext parentContext, SongInfoModel song) {
     showModalBottomSheet(
       context: parentContext,
       backgroundColor: Colors.black,
@@ -320,10 +290,7 @@ class HomeScreen extends StatelessWidget {
                 children: [
                   ListTile(
                     leading: const Icon(Icons.add, color: Colors.white),
-                    title: const Text(
-                      'Create new playlist',
-                      style: TextStyle(color: Colors.white),
-                    ),
+                    title: const CustomText('Create new playlist'),
                     onTap: () {
                       Navigator.pop(sheetContext); // ✅ close sheet first
 
@@ -334,11 +301,8 @@ class HomeScreen extends StatelessWidget {
                     },
                   ),
                   ...state.playlists.map(
-                        (playlist) => ListTile(
-                      title: Text(
-                        playlist.name,
-                        style: const TextStyle(color: Colors.white),
-                      ),
+                    (playlist) => ListTile(
+                      title: CustomText(playlist.name),
                       onTap: () {
                         parentContext.read<PlaylistBloc>().add(
                           AddSongToPlaylistEvent(
@@ -368,10 +332,7 @@ class HomeScreen extends StatelessWidget {
       builder: (dialogContext) {
         return AlertDialog(
           backgroundColor: Colors.black,
-          title: const Text(
-            'New Playlist',
-            style: TextStyle(color: Colors.white),
-          ),
+          title: CustomText('New Playlist'),
           content: TextField(
             controller: controller,
             autofocus: true,
@@ -393,9 +354,9 @@ class HomeScreen extends StatelessWidget {
 
                 if (!parentContext.mounted) return; // ✅ safety
 
-                parentContext
-                    .read<PlaylistBloc>()
-                    .add(CreatePlaylistEvent(name));
+                parentContext.read<PlaylistBloc>().add(
+                  CreatePlaylistEvent(name),
+                );
 
                 Navigator.pop(dialogContext);
               },
